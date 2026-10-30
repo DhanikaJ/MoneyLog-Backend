@@ -77,9 +77,9 @@ Screenshots are stored in the frontend repository under `/assets/img/`.
 
 | Login Screen | Registration Screen | Dashboard |
 |---|---|---|
-| ![Login Screen](assets/img/signin.jpeg) | ![Registration Screen](assets/img/signup.jpeg) | ![Dashboard](assets/img/dashboard.jpeg) |
+| ![Login Screen](src/img/signin.jpeg) | ![Registration Screen](src/img/signup.jpeg) | ![Dashboard](src/img/dashboard.jpeg) |
 | Add Transaction | Transaction History | Filters |
-| ![Add Transaction](assets/img/addexpense.jpeg) | ![Transaction History](assets/img/expenses.jpeg)| ![Filters](assets/img/filter.jpeg) |
+| ![Add Transaction](src/img/addexpense.jpeg) | ![Transaction History](src/img/expenses.jpeg)| ![Filters](src/img/filter.jpeg) |
 
 ## Technology Stack
 
