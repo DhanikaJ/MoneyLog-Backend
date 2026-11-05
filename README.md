@@ -1,298 +1,198 @@
-# MoneyLog
+# MoneyLog Backend
 
-**MoneyLog** is a cross-platform personal finance management system consisting of a React Native mobile frontend and a dedicated backend service. It enables users to record income and expenses, organize transactions, and monitor financial activity through a secure client–server architecture.
+**MoneyLog-Backend** is the server side of the MoneyLog expense tracker: a Java servlet web application that exposes a JSON API for the [MoneyLog mobile app](https://github.com/DhanikaJ/MoneyLog). It uses Hibernate to store users, categories and expenses in a MySQL database and is deployed as a WAR file on GlassFish.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![React Native](https://img.shields.io/badge/React_Native-61DAFB?logo=react&logoColor=black)](https://reactnative.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-Servlets-orange)]()
+[![MySQL](https://img.shields.io/badge/Database-MySQL-blue)]()
+[![Hibernate](https://img.shields.io/badge/ORM-Hibernate%204.3-59666C)]()
 
-## Repository Organization
+> **Status:** academic prototype. It is suitable for local development and demos, not for production. See [Security notes](#security-notes) and [Known Limitations](#known-limitations).
 
-MoneyLog is developed as a cross-origin, full-stack application split into two repositories:
+## Repositories
 
-| Repository | Role | Link |
+| Repository | Role | Technology |
 |---|---|---|
-| **MoneyLog** | React Native mobile frontend | [DhanikaJ/MoneyLog](https://github.com/DhanikaJ/MoneyLog) |
-| **MoneyLog-Backend** | Backend API and business logic | [DhanikaJ/MoneyLog-Backend](https://github.com/DhanikaJ/MoneyLog-Backend) |
-
-The frontend communicates with the backend through HTTP APIs. This separation allows the mobile client and server-side services to be developed, tested, deployed, and scaled independently.
-
-## Overview
-
-MoneyLog helps users manage personal finances by providing a structured record of income, expenses, and account activity. The React Native frontend delivers a mobile-first user experience, while the backend handles authentication, data validation, business rules, and persistent storage.
-
-The system follows a client–server architecture in which the frontend sends requests to backend endpoints and receives structured responses. This design supports maintainability, reusability, and future expansion to additional clients such as web or desktop applications.
+| [MoneyLog](https://github.com/DhanikaJ/MoneyLog) | Mobile client | React Native (Expo), TypeScript |
+| **MoneyLog-Backend** (this repo) | JSON API and database access | Java servlets, Hibernate, MySQL, GlassFish |
 
 ## Features
 
-### Core Features
-
-- User registration and authentication
-- Secure API-based communication between frontend and backend
-- Income and expense tracking
-- Transaction categorization
-- Financial record management
-- Account balance and activity monitoring
-- Cross-platform mobile interface built with React Native
-
-### Backend Responsibilities
-
-- Expose RESTful API endpoints
-- Process and validate client requests
-- Manage authentication and authorization
-- Apply financial business rules
-- Store and retrieve application data
-- Return consistent JSON responses
-
-### Frontend Responsibilities
-
-- Provide a responsive React Native user interface
-- Collect and validate user input
-- Communicate with backend API endpoints
-- Display financial records and summaries
-- Manage navigation and application state
-
-## System Architecture
-
-```text
-React Native Mobile Application
-              │
-              ▼
-       HTTP / REST API
-              │
-              ▼
-MoneyLog Backend Service
-              │
-              ├── Authentication Layer
-              ├── Business Logic Layer
-              ├── Data Access Layer
-              └── Database
-```
-
-## Screenshots
-
-Screenshots are stored in the frontend repository under `/assets/img/`.
-
-| Login Screen | Registration Screen | Dashboard |
-|---|---|---|
-| ![Login Screen](src/img/signin.jpeg) | ![Registration Screen](src/img/signup.jpeg) | ![Dashboard](src/img/dashboard.jpeg) |
-| Add Transaction | Transaction History | Filters |
-| ![Add Transaction](src/img/addexpense.jpeg) | ![Transaction History](src/img/expenses.jpeg)| ![Filters](src/img/filter.jpeg) |
+- **Registration and login** with email and password (passwords are stored as SHA-256 hashes)
+- **Expense management:** add an expense, list a user's expenses (latest first) and delete one (only if it belongs to the given user)
+- **Categories:** returned alphabetically; ten default categories are created automatically the first time the list is requested and the table is empty
+- **Dashboard data:** total spent, number of transactions, this month's total, the five most recent expenses and totals per category
+- **Validation and clear errors:** every endpoint returns JSON of the form `{ "success": false, "message": "..." }` with a suitable HTTP status
+- **CORS headers** on every servlet so the app can call the API from another origin
 
 ## Technology Stack
 
-| Layer | Technology |
+| Area | Technology |
 |---|---|
-| Mobile frontend | React Native |
-| Programming language | JavaScript / TypeScript |
-| Backend | Node.js |
-| API style | RESTful JSON API |
-| Database | Relational or NoSQL database, depending on backend configuration |
-| Authentication | Token-based authentication |
-| Version control | Git and GitHub |
-| License | MIT License |
+| Language | Java (project compile level 1.7) |
+| Web layer | Java servlets (`javax.servlet`, annotation-based `@WebServlet`), Gson for JSON |
+| Persistence | Hibernate 4.3.1 (Criteria API, annotated entities), MySQL Connector/J 8.4.0, c3p0 |
+| Database | MySQL (database name `moneylog`) |
+| Application server | GlassFish 5 (Java EE 8 web profile target) |
+| IDE / build | Apache NetBeans, Apache Ant |
 
-## API Overview
-
-The backend exposes endpoints for authentication and financial-data management. Typical API operations include:
-
-| Method | Endpoint Example | Description |
-|---|---|---|
-| `POST` | `/api/auth/register` | Register a new user |
-| `POST` | `/api/auth/login` | Authenticate a user and issue an access token |
-| `GET` | `/api/transactions` | Retrieve user transactions |
-| `POST` | `/api/transactions` | Create a new income or expense record |
-| `PUT` | `/api/transactions/:id` | Update an existing transaction |
-| `DELETE` | `/api/transactions/:id` | Delete a transaction |
-| `GET` | `/api/summary` | Retrieve financial summary data |
-
-> Adjust endpoint paths to match the actual backend route definitions.
-
-## Backend Setup
-
-### Prerequisites
-
-- Node.js 18 or later
-- npm or yarn
-- A configured database
-- Git
-
-### Installation
-
-```bash
-git clone [https://github.com/DhanikaJ/MoneyLog-Backend.git](https://github.com/DhanikaJ/MoneyLog-Backend.git)
-cd MoneyLog-Backend
-npm install
-```
-
-### Environment Configuration
-
-Create a `.env` file in the backend root directory:
-
-```env
-PORT=5000
-DATABASE_URL=your_database_connection_string
-JWT_SECRET=your_secure_jwt_secret
-CORS_ORIGIN=http://localhost:8081
-```
-
-> Never commit real database credentials, JWT secrets, or API keys to version control.
-
-### Start the Backend
-
-```bash
-npm start
-```
-
-For development with automatic restarts:
-
-```bash
-npm run dev
-```
-
-The backend should now be available at:
+## Project Structure
 
 ```text
-http://localhost:5000
+MoneyLog-Backend/
+├── src/
+│   └── java/
+│       ├── controller/               # Servlets (the API)
+│       │   ├── LoginServlet.java
+│       │   ├── UserServlet.java      # Registration
+│       │   ├── DashboardServlet.java
+│       │   ├── CategoryServlet.java
+│       │   ├── ExpenseServlet.java   # Add and delete
+│       │   └── ExpenseListServlet.java
+│       ├── hibernate/                # Entities and session factory
+│       │   ├── Users.java
+│       │   ├── Category.java
+│       │   ├── Expense.java
+│       │   └── HibernateUtil.java    # Reads DB_URL, DB_USER, DB_PASSWORD
+│       └── hibernate.cfg.xml.template  # Copy to hibernate.cfg.xml (see Setup)
+├── web/WEB-INF/glassfish-web.xml
+├── nbproject/                        # NetBeans project configuration
+├── build.xml                         # Apache Ant build script
+├── src/img/                          # Screenshots of the mobile app
+├── LICENSE
+└── README.md
 ```
 
-## Frontend Setup
+There are no JSP pages and no `web.xml`. Servlets are registered with annotations.
 
-### Prerequisites
+## Database
 
-- Node.js 18 or later
-- npm or yarn
-- Android Studio for Android emulation
-- Xcode and CocoaPods for iOS development on macOS
-- A physical device or emulator
+The application uses a MySQL database named `moneylog`. The schema script is not included in this repository yet. The tables expected by the Hibernate entities are:
 
-### Installation
-
-```bash
-git clone [https://github.com/DhanikaJ/MoneyLog.git](https://github.com/DhanikaJ/MoneyLog.git)
-cd MoneyLog
-npm install
-```
-
-### Configure Backend URL
-
-Update the frontend API base URL to point to the running backend:
-
-```env
-API_BASE_URL=http://localhost:5000
-```
-
-For a physical Android device, use your computer’s local network IP address instead of `localhost`:
-
-```env
-API_BASE_URL=http://192.168.1.10:5000
-```
-
-### Run on Android
-
-```bash
-npm run android
-```
-
-### Run on iOS
-
-```bash
-cd ios
-pod install
-cd ..
-npm run ios
-```
-
-## Cross-Origin Configuration
-
-Because the React Native frontend and backend run as separate origins during development, the backend must allow requests from the frontend origin.
-
-Configure Cross-Origin Resource Sharing (CORS) on the backend:
-
-```javascript
-const cors = require("cors");
-
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  })
-);
-```
-
-For React Native development, CORS is primarily relevant when the application uses a web-based environment or browser-based debugging tools. Native mobile applications communicate directly with the API, but CORS configuration remains important for web clients and secure API access.
-
-## Usage
-
-1. Start the MoneyLog backend service.
-2. Start the React Native frontend application.
-3. Register a new account or log in.
-4. Add income and expense transactions.
-5. Categorize and review financial records.
-6. Monitor account activity through the dashboard.
-
-## Database Design
-
-The application is expected to use the following core entities:
-
-| Entity | Description |
+| Table | Columns |
 |---|---|
-| User | Stores account credentials and profile information |
-| Transaction | Represents an income or expense entry |
-| Category | Groups transactions into financial categories |
-| Account | Represents a wallet, bank account, or cash balance |
-| Summary | Derived financial data such as total income, expenses, and balance |
+| `users` | `id`, `username`, `email`, `password_hash`, `created_at`, `updated_at` |
+| `category` | `id`, `name` |
+| `expense` | `id`, `amount`, `category_id` (FK to `category`), `description`, `dates`, `created_at`, `updated_at`, `users_id` (FK to `users`) |
 
-## Security Considerations
+Create the database and tables yourself, for example:
 
-- Hash user passwords using a secure hashing algorithm such as bcrypt.
-- Use JSON Web Tokens (JWT) for stateless authentication.
-- Validate and sanitize all incoming API requests.
-- Apply authorization checks so users can access only their own records.
-- Use HTTPS in production.
-- Store secrets in environment variables, not in source code.
-- Apply rate limiting to authentication and sensitive endpoints.
-- Keep dependencies updated and scan for known vulnerabilities.
+```sql
+CREATE DATABASE moneylog CHARACTER SET utf8mb4;
+```
+
+Hibernate does not create the tables for you, because `hibernate.hbm2ddl.auto` is not set. Add `<property name="hibernate.hbm2ddl.auto">update</property>` to your local `hibernate.cfg.xml` while developing, or create the tables manually.
+
+## Setup
+
+### Requirements
+
+- JDK 8 (GlassFish 5 runs on Java 8)
+- GlassFish 5.x (the NetBeans project targets `gfv5ee8`)
+- MySQL 8 and Apache NetBeans (recommended) or Apache Ant
+- The libraries below. They are not stored in the repository (the NetBeans project points at a folder on the author's computer), so add them to the project or to `web/WEB-INF/lib`:
+
+| Library | Version |
+|---|---|
+| Hibernate (core, commons-annotations, entitymanager, c3p0, ehcache) | 4.3.1.Final |
+| antlr, dom4j, javassist, jboss-logging, jboss-transaction-api | 2.7.7, 1.6.1, 3.18.1-GA, 3.1.3.GA, 1.2 spec |
+| c3p0, mchange-commons-java, ehcache-core | 0.9.2.1, 0.2.3.4, 2.4.3 |
+| Gson | 2.10.1 |
+| MySQL Connector/J | 8.4.0 |
+| slf4j-api, slf4j-simple | 1.6.1 |
+
+### 1. Database credentials
+
+The real `src/java/hibernate.cfg.xml` is git-ignored so passwords are never committed. Create it from the template:
+
+```bash
+cp src/java/hibernate.cfg.xml.template src/java/hibernate.cfg.xml
+```
+
+You can leave the placeholder values in that file and provide the real ones as **environment variables** that `HibernateUtil` reads when the server starts:
+
+| Variable | Example |
+|---|---|
+| `DB_URL` | `jdbc:mysql://localhost:3306/moneylog?useSSL=false` |
+| `DB_USER` | your MySQL user |
+| `DB_PASSWORD` | your MySQL password |
+
+Set them in the environment of the process that runs GlassFish. If a variable is missing, the value from `hibernate.cfg.xml` is used instead.
+
+### 2. Build and deploy
+
+With NetBeans: open the project, add the libraries, then right-click the project and choose **Run** (it deploys to GlassFish and opens the context path).
+
+With Ant:
+
+```bash
+ant clean dist        # creates dist/MoneyLog.war
+```
+
+Then deploy the WAR to GlassFish (for example with the admin console or `asadmin deploy dist/MoneyLog.war`).
+
+The WAR is named `MoneyLog.war`, so the API is served from `http://localhost:8080/MoneyLog` by default. That is the URL the mobile app expects.
+
+### 3. Quick check
+
+```bash
+curl http://localhost:8080/MoneyLog/CategoryServlet
+```
+
+should return JSON with `"success": true` and a list of categories.
+
+## API Reference
+
+Base URL: `http://<host>:8080/MoneyLog`. All requests and responses use JSON (`Content-Type: application/json`). Every error response has `success: false` and a `message`.
+
+| Method | Endpoint | Request | Success response |
+|---|---|---|---|
+| `POST` | `/UserServlet` | JSON body: `username` (3+ characters), `email`, `password` (6+ characters) | `201` with `success`, `message`, `id`, `username`. Duplicate email or username returns `409`. |
+| `POST` | `/LoginServlet` | JSON body: `email`, `password` | `200` with `success`, `id`, `username`, `email`, `message`. Wrong credentials return `401`. |
+| `GET` | `/CategoryServlet` | none | List of categories (`id`, `name`), sorted by name. Creates the ten defaults if the table is empty. |
+| `GET` | `/DashboardServlet?userId=` | query: `userId` | `success`, `totalExpenses`, `totalTransactions`, `monthlyTotal`, `recentExpenses` (latest 5) and `categoryTotals`. |
+| `GET` | `/ExpenseListServlet?userId=` | query: `userId` | `success`, `expenses` (each with `id`, `amount`, `description`, `dates`, `createdAt`, `updatedAt`, `category`) and `totalCount`, latest first. |
+| `POST` | `/ExpenseServlet` | JSON body: `userId`, `categoryId`, `amount` (greater than 0, at most 999,999.99), `description` (required, up to 255 characters), `dates` (`yyyy-MM-dd`) | `201` with `success`, `expenseId`, `amount`, `description`, `categoryName`, `date`. |
+| `DELETE` | `/ExpenseServlet?expenseId=&userId=` | query: `expenseId`, `userId` | `200` with `success` and `deletedExpenseId`. Returns `404` if the expense is not found for that user. |
+| `DELETE` | `/ExpenseListServlet?expenseId=&userId=` | query: same as above | Same behaviour as the delete above (the same operation is implemented in both servlets). |
+
+There is no endpoint to update an expense, so the app's **Edit** button is not implemented yet.
+
+## Screenshots of the mobile client
+
+| Dashboard | Add expense | All expenses |
+|---|---|---|
+| ![Dashboard](src/img/dashboard.jpeg) | ![Add expense](src/img/addexpense.jpeg) | ![All expenses](src/img/expenses.jpeg) |
+
+## Security notes
+
+This project was built to learn client-server development, and several things are intentionally simple. They need to be fixed before any real use:
+
+- **No authentication tokens.** Login returns the user id, and every other endpoint trusts the `userId` the client sends. Anyone who knows or guesses an id can read, add or delete that user's expenses.
+- **Open CORS:** `Access-Control-Allow-Origin: *` is sent by every servlet.
+- **Password hashing:** passwords are hashed with plain, unsalted SHA-256. A slow, salted algorithm such as bcrypt or Argon2 should be used.
+- **Credentials:** database credentials come from environment variables or a git-ignored `hibernate.cfg.xml`. Never commit real credentials. If a password was ever committed, change it.
+- **Verbose logs and errors:** servlets print request data to the console, `hibernate.show_sql` is on, and some error responses include the exception message.
+- The MySQL connection uses `useSSL=false` in the example URL.
+
+## Known Limitations
+
+- No schema script or seed data (apart from the automatic default categories).
+- No update endpoint, no income, accounts or budgets, and no automated tests.
+- Money is stored as a floating-point `Double` (a `DECIMAL` column and `BigDecimal` would be safer).
+- Amounts above Rs. 999,999.99 are rejected by a fixed limit in the code.
+- The NetBeans project references libraries by absolute paths on the author's computer, and the project is compiled at Java 1.7 level with old library versions (Hibernate 4.3.1 dates from 2014).
+- Compiled output (`build/`, `dist/`) was committed in the past. These folders are now listed in `.gitignore` and should not be tracked.
 
 ## Future Enhancements
 
-- Budget planning and spending limits
-- Recurring transactions
-- Financial reports and charts
-- Multi-currency support
-- Cloud synchronization
-- Biometric authentication
-- Export transactions to CSV or PDF
-- Notification reminders for bills and goals
-- Offline-first support with background synchronization
-- Automated testing and CI/CD integration
-
-## Contributing
-
-Contributions are welcome.
-
-1. Fork the relevant repository.
-2. Create a feature branch:
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. Commit your changes:
-
-   ```bash
-   git commit -m "feat: add transaction summary endpoint"
-   ```
-
-4. Push the branch:
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-5. Open a pull request.
+- Token-based authentication (JWT or server sessions) with per-user authorization
+- bcrypt password hashing and an allow-list for CORS
+- Update-expense endpoint, income and budgets
+- A `schema.sql` file, plus Flyway or Hibernate schema management
+- Maven or Gradle build with managed dependencies
+- A Dockerfile (Tomcat or GlassFish plus MySQL) for easy hosting
+- Unit and integration tests
 
 ## License
 
@@ -301,4 +201,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Author
 
 **DhanikaJ**  
-GitHub: [https://github.com/DhanikaJ](https://github.com/DhanikaJ)
+Portfolio: [https://dhanikaj.dev](https://dhanikaj.dev)
