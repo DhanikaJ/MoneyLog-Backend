@@ -5,27 +5,18 @@
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/moneylog?useSSL=false</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">REDACTED_PASSWORD</property>
+        <property name="hibernate.connection.password">CHANGE_ME</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.show_sql">true</property>
-        <!-- CRITICAL: Transaction and Connection Settings -->
-        <property name="hibernate.connection.isolation">2</property> <!-- READ_COMMITTED -->
+        <property name="hibernate.connection.isolation">2</property>
         <property name="hibernate.connection.autocommit">false</property>
         <property name="hibernate.connection.pool_size">5</property>
-        
-        <!-- Disable all caching to prevent stale data -->
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
-        
-        <!-- Force immediate writes -->
         <property name="hibernate.jdbc.batch_size">0</property>
         <property name="hibernate.order_inserts">true</property>
         <property name="hibernate.order_updates">true</property>
-        
-        <!-- Connection provider settings -->
         <property name="hibernate.connection.provider_disables_autocommit">true</property>
-        
-        <!-- Show SQL for debugging (remove in production) -->
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
         <mapping class="hibernate.Users"/>

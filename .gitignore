@@ -1,0 +1,25 @@
+# NetBeans
+nbproject/private/
+build/
+dist/
+.nb-gradle/
+*.iml
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.ipr
+*.iwb
+
+# Compiled class files
+*.class
+
+# Hibernate config with credentials (use .template instead)
+src/java/hibernate.cfg.xml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
